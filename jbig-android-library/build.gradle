@@ -1,68 +1,45 @@
 apply plugin: 'com.android.library'
 
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
-
-try {
-    apply from: '../../signing.gradle'
-} catch (ex) {
-    ex.printStackTrace()
-}
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 33
     archivesBaseName = "jbig-android"
+    ndkVersion '23.2.8568313'
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
         externalNativeBuild {
-            ndkBuild {
-                // cFlags cppFlags
-            }
             cmake {
-                
+                cppFlags ''
             }
+        }
+
+        ndk {
+            abiFilters "armeabi-v7a"
         }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            try {
-                signingConfig signingConfigs.release
-            } catch (ex) {
-                ex.printStackTrace()
-            }
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-//    libraryVariants.all { variant ->
-//        variant.outputs.each { output ->
-//            def outputFile = output.outputFile
-//            if (outputFile != null && outputFile.name.endsWith('.aar')) {
-//                def fileName = "${archivesBaseName}-${buildType.name}.aar"
-//                output.outputFile = new File(outputFile.parent, fileName)
-//            }
-//        }
-//    }
+
     externalNativeBuild {
-//        ndkBuild {
-//            path 'src/main/jni/Android.mk'
-//        }
         cmake {
             path 'CMakeLists.txt'
+            version '3.18.1'
         }
     }
     productFlavors {
     }
 }
-
-apply from: './bintray_upload.gradle'
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
